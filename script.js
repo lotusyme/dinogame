@@ -3,6 +3,8 @@ const obstacle = document.getElementById('obstacle');
 const scoreDisplay = document.getElementById('score');
 const gameOverText = document.getElementById('game-over');
 const ground = 150;
+const background = document.getElementById('background');
+const ground = background.offsetHeight;
 
 let isJumping = false;
 let isGameOver = false;
