@@ -1,104 +1,113 @@
-const dino = document.getElementById('dino');
-const obstacle = document.getElementById('obstacle');
-const scoreDisplay = document.getElementById('score');
-const gameOverText = document.getElementById('game-over');
-
-let isJumping = false;
-let isGameOver = false;
-let score = 0;
-
-function jump() {
-  if (isJumping) return;
-  isJumping = true;
-
-  let position = 0;
-  const upInterval = setInterval(() => {
-    if (position >= 120) {
-      clearInterval(upInterval);
-      // fall down
-      const downInterval = setInterval(() => {
-        if (position <= 0) {
-          clearInterval(downInterval);
-          isJumping = false;
-          dino.style.bottom = '0px';
-        } else {
-          position -= 10;
-          dino.style.bottom = position + 'px';
-        }
-      }, 20);
-    } else {
-      position += 10;
-      dino.style.bottom = position + 'px';
-    }
-  }, 20);
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-function startGame() {
-  gameOverText.classList.add('hidden');
-  obstacle.style.left = '100%';
-  score = 0;
-  scoreDisplay.textContent = 'Score: ' + score;
-  isGameOver = false;
+body, html {
+  height: 100%;
+  overflow: hidden;
+  background: #f0f0f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  let obstacleLeft = window.innerWidth;
-  let obstacleSpeed = 8;
-  let gameLoop;
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(to top, #8ed0f9, #fff);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
 
-  function moveObstacle() {
-    if (isGameOver) return;
+/* Background */
+#background {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  background: repeating-linear-gradient(
+    to right,
+    #6bbf59 0,
+    #6bbf59 40px,
+    #5aaa4a 40px,
+    #5aaa4a 80px
+  );
+  z-index: 1;
+}
 
-    obstacleLeft -= obstacleSpeed;
-    obstacle.style.left = obstacleLeft + 'px';
+/* Dino */
+#dino {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background-image: url('https://i.gifer.com/origin/56/56b60b071f1a88a50499a3a4d45e0bb0.gif');
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 10;
+  bottom: 0;
+}
 
-    // Check collision
-    const dinoRect = dino.getBoundingClientRect();
-    const obstacleRect = obstacle.getBoundingClientRect();
+/* Obstacle */
+#obstacle {
+  position: absolute;
+  width: 50px;
+  height: 75px;
+  background-color: #444;
+  border-radius: 6px;
+  z-index: 10;
+  bottom: 150px; /* đặt trên nền */
+  left: 100%;
+}
 
-    if (
-      obstacleLeft < dinoRect.right &&
-      obstacleLeft + obstacleRect.width > dinoRect.left &&
-      dinoRect.bottom > obstacleRect.top &&
-      dinoRect.top < obstacleRect.bottom &&
-      !isJumping
-    ) {
-      // collision detected
-      gameOver();
-      return;
-    }
+/* Score */
+#score {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  z-index: 20;
+}
 
-    // Reset obstacle
-    if (obstacleLeft < -obstacleRect.width) {
-      obstacleLeft = window.innerWidth;
-      score++;
-      scoreDisplay.textContent = 'Score: ' + score;
+/* Game Over */
+#game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  background: rgba(255,255,255,0.9);
+  padding: 20px 30px;
+  border-radius: 10px;
+  color: #e74c3c;
+  z-index: 30;
+  user-select: none;
+}
 
-      // speed up every 5 points
-      if (score % 5 === 0 && obstacleSpeed < 20) {
-        obstacleSpeed += 1;
-      }
-    }
+.hidden {
+  display: none;
+}
 
-    gameLoop = requestAnimationFrame(moveObstacle);
+/* Responsive */
+@media (max-width: 600px) {
+  #dino {
+    width: 70px;
+    height: 70px;
   }
-
-  moveObstacle();
-}
-
-function gameOver() {
-  isGameOver = true;
-  gameOverText.classList.remove('hidden');
-  cancelAnimationFrame(moveObstacle);
-}
-
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    if (isGameOver) {
-      startGame();
-    } else {
-      jump();
-    }
+  #obstacle {
+    width: 35px;
+    height: 50px;
+    bottom: 100px;
   }
-});
-
-// Start the game initially
-startGame();
+  #score {
+    font-size: 14px;
+  }
+  #game-over {
+    font-size: 18px;
+  }
+}
