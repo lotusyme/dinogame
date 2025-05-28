@@ -2,6 +2,7 @@ const dino = document.getElementById('dino');
 const obstacle = document.getElementById('obstacle');
 const scoreDisplay = document.getElementById('score');
 const gameOverText = document.getElementById('game-over');
+const ground = 150;
 
 let isJumping = false;
 let isGameOver = false;
@@ -11,16 +12,18 @@ function jump() {
   if (isJumping) return;
   isJumping = true;
 
-  let position = 0;
+  let position = ground;  // bắt đầu từ vị trí ground, không phải 0
+  const jumpHeight = 150; // chiều cao nhảy (có thể tùy chỉnh)
+
   const upInterval = setInterval(() => {
-    if (position >= 150) {
+    if (position >= ground + jumpHeight) {
       clearInterval(upInterval);
       // rơi xuống
       const downInterval = setInterval(() => {
-        if (position <= 0) {
+        if (position <= ground) {
           clearInterval(downInterval);
           isJumping = false;
-          dino.style.bottom = '0px';
+          dino.style.bottom = ground + 'px';
         } else {
           position -= 10;
           dino.style.bottom = position + 'px';
